@@ -24,10 +24,14 @@ mongoose.connection.on('error', (err) => {
   console.error('Error connecting to MonngoDB', err);
 });
 
+app.get('/_ah/warmup', (req, res) => {
+  res.send('Warmup');
+});
+
 app.get('/', requireAuth, (req, res) => {
   res.send(`Your email: ${req.user.email}`);
 });
 
-app.listen(3000, () => {
-  console.log('Listening on port 3000');
+app.listen(8080, () => {
+  console.log('Listening on port 8080');
 });
