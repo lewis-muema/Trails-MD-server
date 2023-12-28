@@ -24,7 +24,7 @@ router.get('/tracks', async (req, res) => {
     });
   });
   if (filteredTracks.length > 0) {
-    res.status(200).send({ tracks: filteredTracks, message: 'Tracks fetched successfully' });
+    res.status(200).send({ tracks: filteredTracks, message: 'Trails fetched successfully' });
   } else {
     res.status(404).send({ message: 'No tracks found' });
   }
@@ -38,7 +38,7 @@ router.get('/tracks/:id', async (req, res) => {
       const track = await Track.findOne({ _id: id });
       if (track) {
         res.status(200).send({
-          name: track.name, id: track._id, locations: track.locations, message: 'Track found successfully',
+          name: track.name, id: track._id, locations: track.locations, message: 'Trail found successfully',
         });
       } else {
         res.status(200).send({ message: 'This trail cannot be found' });
@@ -63,14 +63,14 @@ router.post('/tracks', async (req, res) => {
   if (existingTrack
      && existingTrack.locations[0].timestamp === locations[0].timestamp) {
     if (existingTrack.locations.length === locations.length) {
-      return res.status(401).send({ message: 'This track already exists' });
+      return res.status(401).send({ message: 'This trail already exists' });
     }
     const track = await Track.findOneAndUpdate({ _id: existingTrack.id }, req.body, {
       returnOriginal: false,
     });
     if (track) {
       return res.status(200).send({
-        name: track.name, id: track._id, locations: track.locations, message: 'Track updated successfully',
+        name: track.name, id: track._id, locations: track.locations, message: 'Trail updated successfully',
       });
     }
   }
@@ -78,10 +78,10 @@ router.post('/tracks', async (req, res) => {
     const track = new Track({ name, locations, userId: req.user._id });
     await track.save();
     res.status(200).send({
-      name: track._doc.name, id: track._doc._id, locations: track._doc.locations, message: 'Track created successfully',
+      name: track._doc.name, id: track._doc._id, locations: track._doc.locations, message: 'Trail created successfully',
     });
   } catch (err) {
-    res.status(401).status({ message: 'Sorry, Could not create a track. Please try again later' });
+    res.status(401).status({ message: 'Sorry, Could not create a trail. Please try again later' });
   }
 });
 
@@ -95,13 +95,13 @@ router.put('/tracks/:id', async (req, res) => {
       });
       if (track) {
         res.status(200).send({
-          name: track.name, id: track._id, locations: track.locations, message: 'Track updated successfully',
+          name: track.name, id: track._id, locations: track.locations, message: 'Trail updated successfully',
         });
       } else {
         res.status(200).send({ message: 'This trail cannot be found' });
       }
     } catch (err) {
-      res.status(400).send({ message: 'Failed to update this track, Please try again later' });
+      res.status(400).send({ message: 'Failed to update this trail, Please try again later' });
     }
   } else {
     res.status(400).send({ message: 'This trail cannot be found' });
@@ -116,13 +116,13 @@ router.delete('/tracks/:id', async (req, res) => {
       const track = await Track.findOneAndDelete({ _id: id });
       if (track) {
         res.status(200).send({
-          name: track.name, id: track._id, locations: track.locations, message: 'Track deleted successfully',
+          name: track.name, id: track._id, locations: track.locations, message: 'Trail deleted successfully',
         });
       } else {
         res.status(200).send({ message: 'This trail cannot be found' });
       }
     } catch (err) {
-      res.status(400).send({ message: 'Failed to delete this track, Please try again later' });
+      res.status(400).send({ message: 'Failed to delete this trail, Please try again later' });
     }
   } else {
     res.status(400).send({ message: 'This trail cannot be found' });
