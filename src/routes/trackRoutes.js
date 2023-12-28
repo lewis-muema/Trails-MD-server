@@ -59,6 +59,21 @@ router.post('/tracks', async (req, res) => {
     return res.status(422).send({ message: 'You must provide a name and location' });
   }
 
+  const existingTrack = await Track.findOne({ name });
+  if (existingTrack
+     && existingTrack.locations[0].timestamp === locations[0].timestamp) {
+    if (existingTrack.locations.length === locations.length) {
+      return res.status(401).send({ message: 'This track already exists' });
+    }
+    const track = await Track.findOneAndUpdate({ _id: existingTrack.id }, req.body, {
+      returnOriginal: false,
+    });
+    if (track) {
+      return res.status(200).send({
+        name: track.name, id: track._id, locations: track.locations, message: 'Track updated successfully',
+      });
+    }
+  }
   try {
     const track = new Track({ name, locations, userId: req.user._id });
     await track.save();

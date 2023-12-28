@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken');
 const User = mongoose.model('User');
 
 const router = express.Router();
-const expiry = '24h';
+const expiry = '168h';
 
 router.post('/signup', (req, res) => {
   const { email, password } = req.body;
