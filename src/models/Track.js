@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const pointSchema = new mongoose.Schema({
   timestamp: Number,
+  index: Number,
   coords: {
     latitude: Number,
     longitude: Number,
