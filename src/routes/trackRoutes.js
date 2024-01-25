@@ -130,7 +130,7 @@ router.delete('/tracks/:id', async (req, res) => {
 });
 
 // Delete many tracks
-router.delete('/tracks', async (req, res) => {
+router.post('/delete-tracks', async (req, res) => {
   if (Array.isArray(req.body) && req.body.length > 0) {
     try {
       const track = await Track.deleteMany({ _id: { $in: req.body } });
@@ -139,7 +139,7 @@ router.delete('/tracks', async (req, res) => {
       res.status(400).send({ message: 'Failed to delete these trails, Please try again later' });
     }
   } else {
-    res.status(400).send({ message: 'Please send an array of ids in the payload' });
+    res.status(400).send({ message: 'Please send an array of ids in the payload', data: req.body });
   }
 });
 
