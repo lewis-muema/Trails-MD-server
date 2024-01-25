@@ -87,7 +87,7 @@ router.post('/validate-token', async (req, res) => {
     userId: user._id,
     token,
   });
-  if (!tokenVal) return res.status(400).send({ message: 'This token has already expired' });
+  if (!tokenVal) return res.status(400).send({ message: 'This token is invalid' });
 
   user.password = req.body.password;
   await user.save();
