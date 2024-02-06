@@ -69,7 +69,7 @@ router.post('/forgot-password', async (req, res) => {
   if (status) {
     res.status(200).send({ message: 'A password reset token has been sent to your email account', user: user.email, id: user._id });
   } else {
-    res.status(200).send({ message: 'Failed to send email, Please try again later' });
+    res.status(400).send({ message: 'Failed to send email, Please try again later' });
   }
 });
 
@@ -79,25 +79,29 @@ router.post('/validate-token', async (req, res) => {
   if (!id || !token || !password) {
     return res.status(400).send({ message: 'Please provide the correct fields' });
   }
-  const user = await User.findOne({ _id: id });
-  if (!user) {
+  if (mongoose.Types.ObjectId.isValid(id)) {
+    const user = await User.findOne({ _id: id });
+    if (!user) {
+      return res.status(400).send({ message: 'This account does not exist' });
+    }
+    const tokenVal = await Token.findOne({
+      userId: user._id,
+      token,
+    });
+    if (!tokenVal) return res.status(400).send({ message: 'This token is invalid' });
+
+    user.password = req.body.password;
+    await user.save();
+
+    await Token.findOneAndDelete({
+      userId: user._id,
+      token,
+    });
+
+    res.status(200).send({ message: 'User password changed successfully', user: user.email });
+  } else {
     return res.status(400).send({ message: 'This account does not exist' });
   }
-  const tokenVal = await Token.findOne({
-    userId: user._id,
-    token,
-  });
-  if (!tokenVal) return res.status(400).send({ message: 'This token is invalid' });
-
-  user.password = req.body.password;
-  await user.save();
-
-  await Token.findOneAndDelete({
-    userId: user._id,
-    token,
-  });
-
-  res.status(200).send({ message: 'User password changed successfully', user: user.email });
 });
 
 module.exports = router;
