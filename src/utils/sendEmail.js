@@ -5,7 +5,8 @@ const axios = require('axios');
 const clientId = '1039337197285-ha1baki8544kk88jqf6m8lboik5dgkd7.apps.googleusercontent.com';
 const clientSecret = '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';
 const senderEmail = 'mdkkcontact@gmail.com';
-const refreshToken = '1//04RGjg2HN9sZ2CgYIARAAGAQSNwF-L9IrqCDmg6p9tByznbZmWrmeDv_XXGh4OH3ue8xUBkfKZwRIx1Mi4gH8UbVc0GclL3-Zuwc';
+// const authCode = ''; Can only be used once
+const refreshToken = '4/0AfJohXnawA4UrftzPsbWPxUj3sbYCyC0T8iKaBIp22yS_RiOU8mBnevnyPdtmrP_-2GK9g'; // if the app is not publised this only lasts 7 days. Once published it lasts forever
 
 const sendEmail = async (email, subject, text) => {
   try {
