@@ -1,21 +1,24 @@
 const nodemailer = require('nodemailer');
 const axios = require('axios');
+const mongoose = require('mongoose');
 
+const Config = mongoose.model('Config');
 
-const clientId = '1039337197285-ha1baki8544kk88jqf6m8lboik5dgkd7.apps.googleusercontent.com';
-const clientSecret = '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';
 const senderEmail = 'mdkkcontact@gmail.com';
-// const authCode = ''; Can only be used once
-const refreshToken = '1//04U3hWOcEsAE0CgYIARAAGAQSNwF-L9Ir5NLQw-sBeRPKTFA1Lu4ofmVruUSEyeuOotzgRKJZtLlv-1SO7RbFDI3FvWxzVIZj1XY'; // if the app is not publised this only lasts 7 days. Once published it lasts forever
 
 const sendEmail = async (email, subject, text) => {
   try {
+    const id = new mongoose.Types.ObjectId('65c2391d867b6af066953c4c');
+    let config = await Config.findOne({ _id: id });
+    if (!config) {
+      config = await Config.findOne({ name: 'oauth' });
+    }
     const response = await axios.post(
       'https://www.googleapis.com/oauth2/v3/token',
       {
-        client_id: clientId,
-        client_secret: clientSecret,
-        refresh_token: refreshToken,
+        client_id: config.configuration.clientId,
+        client_secret: config.configuration.clientSecret,
+        refresh_token: config.configuration.refreshToken,
         grant_type: 'refresh_token',
       },
     );
@@ -25,9 +28,9 @@ const sendEmail = async (email, subject, text) => {
       auth: {
         type: 'OAuth2',
         user: senderEmail,
-        clientId,
-        clientSecret,
-        refreshToken,
+        clientId: config.configuration.clientId,
+        clientSecret: config.configuration.clientSecret,
+        refreshToken: config.configuration.refreshToken,
         accessToken: response.data.access_token,
       },
     });
