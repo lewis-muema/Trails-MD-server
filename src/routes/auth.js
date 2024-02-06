@@ -67,7 +67,7 @@ router.post('/forgot-password', async (req, res) => {
   }
   const status = await sendEmail(user.email, 'Password Reset Token', token.token);
   if (status) {
-    res.status(200).send({ message: 'A password reset token has been sent to your email account', user: user._id });
+    res.status(200).send({ message: 'A password reset token has been sent to your email account', user: user.email });
   } else {
     res.status(200).send({ message: 'Failed to send email, Please try again later' });
   }
