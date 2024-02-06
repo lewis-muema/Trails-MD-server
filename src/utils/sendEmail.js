@@ -1,6 +1,7 @@
 const nodemailer = require('nodemailer');
 const axios = require('axios');
 const mongoose = require('mongoose');
+const hash = require('./hash');
 
 const Config = mongoose.model('Config');
 
@@ -16,9 +17,9 @@ const sendEmail = async (email, subject, text) => {
     const response = await axios.post(
       'https://www.googleapis.com/oauth2/v3/token',
       {
-        client_id: config.configuration.clientId,
-        client_secret: config.configuration.clientSecret,
-        refresh_token: config.configuration.refreshToken,
+        client_id: hash(false, config.configuration.clientId),
+        client_secret: hash(false, config.configuration.clientSecret),
+        refresh_token: hash(false, config.configuration.refreshToken),
         grant_type: 'refresh_token',
       },
     );
@@ -28,9 +29,9 @@ const sendEmail = async (email, subject, text) => {
       auth: {
         type: 'OAuth2',
         user: senderEmail,
-        clientId: config.configuration.clientId,
-        clientSecret: config.configuration.clientSecret,
-        refreshToken: config.configuration.refreshToken,
+        clientId: hash(false, config.configuration.clientId),
+        clientSecret: hash(false, config.configuration.clientSecret),
+        refreshToken: hash(false, config.configuration.refreshToken),
         accessToken: response.data.access_token,
       },
     });

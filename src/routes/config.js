@@ -2,6 +2,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const requireAuth = require('../middlewares/requireAuth');
+const hash = require('../utils/hash');
 
 const Config = mongoose.model('Config');
 
@@ -11,6 +12,9 @@ router.use(requireAuth);
 
 router.post('/create-config', async (req, res) => {
   const { configuration, name } = req.body;
+  Object.keys(configuration).forEach((key) => {
+    configuration[key] = hash(true, typeof configuration[key] === 'string' ? configuration[key] : configuration[key].toString());
+  });
   const config = new Config({ configuration, name });
   config.save().then(() => {
     res.status(200).send({ message: 'This config has been created' });
@@ -21,6 +25,9 @@ router.post('/create-config', async (req, res) => {
 
 router.put('/update-config/:id', async (req, res) => {
   const { configuration, name } = req.body;
+  Object.keys(configuration).forEach((key) => {
+    configuration[key] = hash(true, configuration[key]);
+  });
   if (mongoose.Types.ObjectId.isValid(req.params.id)) {
     try {
       const id = new mongoose.Types.ObjectId(req.params.id);
