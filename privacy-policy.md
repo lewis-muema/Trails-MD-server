@@ -1,6 +1,6 @@
 ## Trails MD BFF: Privacy policy
 
-This is a middleware app used to provide API resources to the Trails MD mobile app that allows you to record trails and trips on their phone. This app provides the endpoints that allow users you sign up, log in, store recorded trails and reset their passwords. The middleware is hosted on gcloud and the source code is available on github
+This is a middleware app used to provide API resources to the Trails MD mobile app that allows you to record trails and trips on their phone. This app provides the endpoints that allow users you sign up, log in, store recorded trails and reset their passwords. The middleware is hosted on gcloud and the source code is available on github under the MIT license.
 
 Privacy is a key priority to me and hence i have devoted to make all the processes in this app as secure as possible from using encryption of credentials during login to refreshing auth tokens on a regular basis.
 
