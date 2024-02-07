@@ -10,7 +10,7 @@ const User = mongoose.model('User');
 const Token = mongoose.model('Token');
 
 const router = express.Router();
-const expiry = '168h';
+const expiry = '2160h';
 
 router.post('/signup', (req, res) => {
   const { email, password } = req.body;

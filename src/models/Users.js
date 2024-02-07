@@ -13,6 +13,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  role: {
+    type: String,
+    required: false,
+  }
 });
 
 // Hash password with salt before saving to DB
