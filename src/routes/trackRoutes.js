@@ -85,6 +85,53 @@ router.post('/tracks', async (req, res) => {
   }
 });
 
+// Adding multiple tracks
+router.post('/tracks/many', async (req, res) => {
+  const { tracks } = req.body;
+  const validTracks = [];
+  const createdTracks = [];
+  const updatePromises = [];
+  tracks.forEach((track) => {
+    const { name, locations } = track;
+    if (name || (locations && Array.isArray(locations) && locations.length > 0)) {
+      validTracks.push(track);
+    }
+  });
+
+  if (validTracks.length === 0) {
+    return res.status(422).send({ message: 'You must provide a name and location' });
+  }
+
+  validTracks.forEach(async (track) => {
+    const { id, action } = track;
+    if (action === 'create') {
+      createdTracks.push(track);
+    }
+    if (action === 'edit') {
+      updatePromises.push(new Promise(async (resolve) => {
+        const editedTrack = await Track.findOneAndUpdate({ _id: id }, track, {
+          returnOriginal: false,
+        });
+        resolve(editedTrack);
+      }));
+    }
+  });
+
+  Promise.all(updatePromises).then((updates) => {
+    if (createdTracks.length > 0) {
+      Track.insertMany(createdTracks).then((trails) => {
+        res.status(200).send({
+          created: trails, updated: updates, message: 'Process complete',
+        });
+      }).catch(() => {
+        res.status(401).status({ message: 'Something went wrong. Please try again later' });
+      });
+    } else {
+      res.status(401).status({ created: createdTracks, updated: updates, message: 'Process complete' });
+    }
+  });
+});
+
 // Updating a single track
 router.put('/tracks/:id', async (req, res) => {
   if (mongoose.Types.ObjectId.isValid(req.params.id)) {
