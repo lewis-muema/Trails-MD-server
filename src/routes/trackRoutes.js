@@ -100,10 +100,6 @@ router.post('/tracks/many', async (req, res) => {
     }
   });
 
-  if (validTracks.length === 0) {
-    return res.status(422).send({ message: 'You must provide a name and location' });
-  }
-
   validTracks.forEach(async (track) => {
     const {
       id, action, name, locations,
