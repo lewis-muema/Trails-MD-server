@@ -88,6 +88,9 @@ router.post('/tracks', async (req, res) => {
 // Adding multiple tracks
 router.post('/tracks/many', async (req, res) => {
   const { tracks } = req.body;
+  if (!tracks) {
+    return res.status(422).send({ message: 'Please provide some trails' });
+  }
   const validTracks = [];
   const createdTracks = [];
   const updatePromises = [];
@@ -121,13 +124,13 @@ router.post('/tracks/many', async (req, res) => {
     if (createdTracks.length > 0) {
       Track.insertMany(createdTracks).then((trails) => {
         res.status(200).send({
-          created: trails, updated: updates, message: 'Process complete',
+          created: trails, updated: updates, message: 'Trails have been synced successfully',
         });
       }).catch(() => {
         res.status(401).status({ message: 'Something went wrong. Please try again later' });
       });
     } else {
-      res.status(401).status({ created: createdTracks, updated: updates, message: 'Process complete' });
+      res.status(401).status({ created: createdTracks, updated: updates, message: 'Trails have been synced successfully' });
     }
   });
 });
