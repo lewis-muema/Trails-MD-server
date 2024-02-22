@@ -92,7 +92,6 @@ router.post('/tracks/many', async (req, res) => {
     return res.status(422).send({ message: 'Please provide some trails' });
   }
   const validTracks = [];
-  const createdTracks = [];
   const updatePromises = [];
   tracks.forEach((track) => {
     const { name, locations } = track;
@@ -106,32 +105,40 @@ router.post('/tracks/many', async (req, res) => {
   }
 
   validTracks.forEach(async (track) => {
-    const { id, action } = track;
+    const {
+      id, action, name, locations,
+    } = track;
     if (action === 'create') {
-      createdTracks.push(track);
+      updatePromises.push(new Promise(async (resolve) => {
+        const createdTrack = new Track({ name, locations, userId: req.user._id });
+        await createdTrack.save();
+        resolve({ created: createdTrack });
+      }));
     }
     if (action === 'edit') {
       updatePromises.push(new Promise(async (resolve) => {
         const editedTrack = await Track.findOneAndUpdate({ _id: id }, track, {
           returnOriginal: false,
         });
-        resolve(editedTrack);
+        resolve({ updated: editedTrack });
       }));
     }
   });
 
   Promise.all(updatePromises).then((updates) => {
-    if (createdTracks.length > 0) {
-      Track.insertMany(createdTracks).then((trails) => {
-        res.status(200).send({
-          created: trails, updated: updates, message: 'Trails have been synced successfully',
-        });
-      }).catch(() => {
-        res.status(401).status({ message: 'Something went wrong. Please try again later' });
-      });
-    } else {
-      res.status(401).status({ created: createdTracks, updated: updates, message: 'Trails have been synced successfully' });
-    }
+    const created = [];
+    const updated = [];
+    updates.forEach((update) => {
+      if (update.created) {
+        created.push(update.created);
+      }
+      if (update.updated) {
+        updated.push(update.updated);
+      }
+    });
+    res.status(200).send({
+      created, updated, message: 'Trails have been synced successfully',
+    });
   });
 });
 
