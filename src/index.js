@@ -20,7 +20,7 @@ app.use(tracks);
 app.use(account);
 app.use(config);
 
-const mongoURI = 'mongodb+srv://admin:PassworD@cluster0.8dands8.mongodb.net/?retryWrites=true&w=majority';
+const mongoURI = '';
 mongoose.connect(mongoURI);
 mongoose.connection.on('connected', () => {
   console.log('Successfully connected');
